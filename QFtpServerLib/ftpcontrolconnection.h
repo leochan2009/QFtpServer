@@ -7,6 +7,7 @@
 class QSslSocket;
 class FtpCommand;
 class DataConnection;
+class FtpStorCommand;
 
 // Implements the ftp control connection. Reads the ftp commands from the
 // control connection socket, parses each line and maps it to an implemented
@@ -19,7 +20,7 @@ class FtpControlConnection : public QObject
 public:
     explicit FtpControlConnection(QObject *parent, QSslSocket *socket, const QString &rootPath, const QString &userName = QString(), const QString &password = QString(), bool readOnly = false);
     ~FtpControlConnection();
-
+    FtpStorCommand* m_storCommand;
 signals:
 
 public slots:

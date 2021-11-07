@@ -31,6 +31,7 @@ FtpControlConnection::FtpControlConnection(QObject *parent, QSslSocket *socket, 
     currentDirectory = "/";
     dataConnection = new DataConnection(this);
     reply("220 Welcome to QFtpServer.");
+    this->m_storCommand = new FtpStorCommand(dataConnection, "", false, seekTo());
 }
 
 FtpControlConnection::~FtpControlConnection()
@@ -282,7 +283,16 @@ void FtpControlConnection::retr(const QString &fileName)
 
 void FtpControlConnection::stor(const QString &fileName, bool appendMode)
 {
-    startOrScheduleCommand(new FtpStorCommand(this, fileName, appendMode, seekTo()));
+    //this->m_storCommand = reinterpret_cast<FtpStorCommand*>(this->m_storCommand);
+    this->m_storCommand->setFileName(fileName);
+    this->m_storCommand->setAppendMode(appendMode);
+    this->m_storCommand->setSeekTo(seekTo());
+    // = new FtpStorCommand(this, fileName, appendMode, seekTo());
+    connect(this->m_storCommand, SIGNAL(reply(QString)), this, SLOT(reply(QString)));
+    if (!dataConnection->setFtpCommand(this->m_storCommand)) {
+        reply("425 Can't open data connection.");
+        return;
+    }
 }
 
 void FtpControlConnection::cwd(const QString &dir)

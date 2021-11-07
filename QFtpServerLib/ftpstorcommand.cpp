@@ -10,6 +10,7 @@ FtpStorCommand::FtpStorCommand(QObject *parent, const QString &fileName, bool ap
     file = 0;
     this->seekTo = seekTo;
     success = false;
+    m_onlyStreaming = false;
 }
 
 FtpStorCommand::~FtpStorCommand()
@@ -41,9 +42,17 @@ void FtpStorCommand::startImplementation()
 void FtpStorCommand::acceptNextBlock()
 {
     const QByteArray &bytes = socket->readAll();
-    int bytesWritten = file->write(bytes);
-    if (bytesWritten != bytes.size()) {
-        emit reply("451 Requested action aborted. Could not write data to file.");
-        deleteLater();
+    if (file->fileName().compare("00000_00_NG.txt") == 0 || file->fileName().compare("00000_00_OK.txt"))
+    {
+        emit newDataArrived(file->fileName(), QByteArray(bytes));
     }
+    if (!m_onlyStreaming)
+    {
+        int bytesWritten = file->write(bytes);
+        if (bytesWritten != bytes.size()) {
+            emit reply("451 Requested action aborted. Could not write data to file.");
+            deleteLater();
+        }
+    }
+
 }

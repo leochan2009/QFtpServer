@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 #include "ftpserver.h"
 #include "debuglogdialog.h"
-
+#include <QIntValidator>
 #include <QCoreApplication>
 #include <QSettings>
 #include <QFileDialog>

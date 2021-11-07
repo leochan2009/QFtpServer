@@ -43,7 +43,11 @@ QString FtpServer::lanIp()
 
 void FtpServer::startNewControlConnection()
 {
+    qDebug() << QString("new connection");
     QSslSocket *socket = (QSslSocket *) server->nextPendingConnection();
+
+    // Create a new FTP control connection on this socket.
+    this->m_currentConnection = new FtpControlConnection(this, socket, rootPath, userName, password, readOnly);
 
     // If this is not a previously encountered IP emit the newPeerIp signal.
     QString peerIp = socket->peerAddress().toString();
@@ -59,7 +63,4 @@ void FtpServer::startNewControlConnection()
         emit newPeerIp(peerIp);
         encounteredIps.insert(peerIp);
     }
-
-    // Create a new FTP control connection on this socket.
-    new FtpControlConnection(this, socket, rootPath, userName, password, readOnly);
 }

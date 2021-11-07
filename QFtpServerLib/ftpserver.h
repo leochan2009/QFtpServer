@@ -6,7 +6,7 @@
 #include <qftpserverlib_global.h>
 
 class SslServer;
-
+class FtpControlConnection;
 // The ftp server. Listens on a port, and starts a new control connection each
 // time it gets connected.
 
@@ -26,6 +26,7 @@ public:
 
     // Get the LAN IP of the host, e.g. "192.168.1.10".
     static QString lanIp();
+    FtpControlConnection*  m_currentConnection;
 
 signals:
     // A connection from a new IP has been established. This signal is emitted
